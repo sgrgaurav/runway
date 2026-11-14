@@ -66,6 +66,14 @@ ul.tips li{margin:4px 0}
 .btn.big{padding:16px;text-align:left;font-size:1.05rem;width:100%}
 .btn.big span{display:block;font-weight:400;font-size:.88rem;opacity:.9;margin-top:2px}
 a.btn{display:inline-block;text-decoration:none}
+label.f select{display:block;width:100%;margin-top:4px;padding:10px 12px;font:600 1rem "Source Sans 3",system-ui,sans-serif;color:var(--fg);background:var(--bg);border:1px solid var(--bd);border-radius:10px}
+.today{border:2px solid var(--acc)}
+.job{border-top:1px solid var(--line);padding:12px 0}
+.job:first-child{border-top:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.late{color:var(--bad);font-weight:600}
+.x{background:none;border:0;color:var(--mut);cursor:pointer;font:inherit;font-size:.9rem;text-decoration:underline;padding:4px}
+.row select{width:auto;margin:0;padding:6px 8px;font-size:.9rem}
 </style>
 </head>
 <body>
@@ -75,7 +83,9 @@ a.btn{display:inline-block;text-decoration:none}
 
 <div class="tabs" role="tablist" aria-label="Sections">
 <button class="tab" role="tab" data-t="home" aria-selected="true">Start here</button>
+<button class="tab" role="tab" data-t="days" aria-selected="false">30-day plan</button>
 <button class="tab" role="tab" data-t="run" aria-selected="false">How long can I last?</button>
+<button class="tab" role="tab" data-t="jobs" aria-selected="false">Job tracker</button>
 <button class="tab" role="tab" data-t="plan" aria-selected="false">Action plan</button>
 <button class="tab" role="tab" data-t="risk" aria-selected="false">Am I at risk?</button>
 <button class="tab" role="tab" data-t="msg" aria-selected="false">Messages to send</button>
@@ -87,6 +97,7 @@ a.btn{display:inline-block;text-decoration:none}
 <div class="cta">
 <button class="btn big" data-go="plan:lo">I was laid off<span>Get your first 72 hours mapped out</span></button>
 <button class="btn big" data-go="risk">I’m worried it might happen<span>Check the signs and prepare early</span></button>
+<button class="btn big" data-go="days" id="homeDays">Start my 30-day plan<span>One small step a day, saved on your device</span></button>
 <button class="btn o big" data-go="run">I just want to see my runway</button>
 </div>
 <div class="card">
@@ -114,6 +125,36 @@ a.btn{display:inline-block;text-decoration:none}
 </div>
 </div>
 <div class="card" id="out" aria-live="polite"></div>
+</section>
+
+<section id="p-days" hidden>
+<h2>Your 30 days</h2>
+<p class="sub">One small step a day, about 15 minutes. Missed a day? Pick up where you left off.</p>
+<div class="card" id="dtop"></div>
+<div class="card">
+<h3>Get a nudge each day</h3>
+<p class="hint">Adds all your remaining steps to your phone’s calendar as daily reminders.</p>
+<label class="f" style="max-width:180px">Reminder time<input id="rtime" type="time" value="09:00"></label>
+<button class="btn" id="ics">Add reminders to my calendar</button>
+<a class="btn o" id="sub" href="#" target="_blank" rel="noopener">Get updates by email</a>
+</div>
+<div class="card"><div id="dlist"></div></div>
+</section>
+
+<section id="p-jobs" hidden>
+<h2>Job tracker</h2>
+<p class="sub">Keep every lead, referral and follow-up in one place. Saved on this device only.</p>
+<div class="card">
+<div class="grid">
+<label class="f">Company<input id="jc" type="text" placeholder="e.g. Acme"></label>
+<label class="f">Role<input id="jr" type="text" placeholder="e.g. Analyst"></label>
+<label class="f">Stage<select id="js"></select></label>
+<label class="f">Follow up on<input id="jd" type="date"></label>
+</div>
+<button class="btn" id="jadd">Add to tracker</button>
+</div>
+<div class="card" id="jsum" aria-live="polite"></div>
+<div class="card" id="jlist"></div>
 </section>
 
 <section id="p-plan" hidden>
@@ -165,7 +206,7 @@ var inr=function(n){return "₹"+Math.round(n).toLocaleString("en-IN")};
 /* tabs */
 $$(".tab").forEach(function(b){b.onclick=function(){
 track("tab_"+b.dataset.t);$$(".tab").forEach(function(x){x.setAttribute("aria-selected",x===b)});
-["home","run","plan","risk","msg"].forEach(function(t){$("#p-"+t).hidden=(t!==b.dataset.t)});
+["home","days","run","jobs","plan","risk","msg"].forEach(function(t){$("#p-"+t).hidden=(t!==b.dataset.t)});
 }});
 
 function go(t,m){if(m){mode=m;ls.set("rw_mode",m);drawPlan()}var b=$('.tab[data-t="'+t+'"]');if(b)b.click();window.scrollTo(0,0)}
@@ -262,6 +303,94 @@ var t=$("#m"+b.dataset.c).textContent;track("message_copied");
 function ok(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy message"},1500)}
 function fb(){var r=document.createRange();r.selectNodeContents($("#m"+b.dataset.c));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected. Press copy."}
 try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}}});
+var DAYS=[
+["Pause and read","Read your exit terms in full and ask for time. Sign nothing today."],
+["List what you’re owed","Write down pending salary, leave encashment, bonus, reimbursements and gratuity."],
+["Protect your health cover","Find out when employer cover ends and what your options are to continue or replace it."],
+["Check your provident fund","Confirm your UAN is active and your mobile number and KYC are linked."],
+["Collect your documents","Get your relieving and experience letters, recent payslips and Form 16."],
+["Know your runway","Enter your numbers in the runway calculator and note the result."],
+["Tell five people","Send five trusted contacts a short message from the templates tab."],
+["Pause what you can","Pause SIPs and discretionary spending. Write down what stays."],
+["Talk to your lender","If an EMI is at risk, call your bank before you miss a payment."],
+["Update your resume","Rewrite your last role with three results and numbers."],
+["Refresh your profile","Update your LinkedIn headline and summary, and set your open-to-work preferences."],
+["Define your target","Pick two or three role types and ten companies you’d like to work for."],
+["Warm up your network","List 20 people who could help and message three of them."],
+["Week 2 check-in","What worked, what stalled? Adjust your plan and note one win."],
+["Apply with care","Send three tailored applications. Quality beats volume."],
+["Ask for referrals","Ask two contacts to refer you to a specific open role."],
+["Reach out to recruiters","Message three recruiters who work in your field."],
+["Check your skills","Compare five job posts to your skills and find one gap."],
+["Start closing a gap","Spend 30 minutes on a course or small project for that skill."],
+["Practice interviews","Rehearse your answers to “Tell me about yourself” and “Why did you leave?”"],
+["Week 3 check-in","Review your tracker. Who hasn’t replied? What should change?"],
+["Plan interim income","Note what freelance or consulting work you could offer."],
+["Try one small gig","Reach out for one freelance or contract lead."],
+["Recheck your insurance","Confirm your cover is in place and your premiums are paid."],
+["Follow up","Message everyone you contacted last week who hasn’t replied."],
+["Redo your runway","Re-run the calculator with your latest numbers."],
+["Share where you are","Post a short, honest update asking for leads. Optional, and only if you’re comfortable."],
+["Look after yourself","Plan time for sleep, movement and people you enjoy."],
+["Prepare for offers","List what you’ll compare: pay, notice period, insurance, ESOPs and role."],
+["Review and reset","Look back at your progress and set goals for the next 30 days."]];
+function ymd(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function dayN(){var s=ls.get("rw_start");if(!s)return 0;var a=new Date(s+"T00:00:00"),b=new Date();b.setHours(0,0,0,0);return Math.max(1,Math.floor((b-a)/864e5)+1)}
+function tog(k){var q=ls.get("rw_days")||[],i=q.indexOf(k);if(i<0){q.push(k);track("day_done")}else q.splice(i,1);ls.set("rw_days",q);drawDays();drawHome()}
+function drawDays(){
+var n=dayN(),done=ls.get("rw_days")||[],top=$("#dtop");
+if(!n){top.className="card";top.innerHTML="<h3>Ready when you are</h3><p class='hint'>Day 1 starts today. Each day is one small task you can finish in about 15 minutes.</p><button class='btn' id='dstart'>Start my 30 days</button>"}
+else{var c=Math.min(n,30),d=DAYS[c-1],on=done.indexOf(c)>-1;
+top.className="card today";
+top.innerHTML="<h3>Day "+c+": "+d[0]+"</h3><p style='margin:6px 0 0'>"+d[1]+"</p><button class='btn' id='dtoday'>"+(on?"Done. Tap to undo":"Mark day "+c+" done")+"</button><p class='hint' style='margin-top:10px'>"+done.length+" of 30 steps done. Behind? Do any step in any order.</p>"+(n>30?"<p class='hint'>You’ve reached the end of the plan. Everything stays saved here.</p>":"")}
+$("#dlist").innerHTML=DAYS.map(function(d,k){var on=done.indexOf(k+1)>-1;return "<label class='chk'><input type='checkbox' data-d='"+(k+1)+"'"+(on?" checked":"")+"><div><b>Day "+(k+1)+": "+d[0]+"</b><span>"+d[1]+"</span></div></label>"}).join("");
+$$("#dlist input").forEach(function(c){c.onchange=function(){tog(+c.dataset.d)}})}
+function drawHome(){var n=dayN(),b=$("#homeDays");if(!b)return;
+if(n){var c=Math.min(n,30);b.innerHTML="Continue: day "+c+"<span>Today’s step: "+DAYS[c-1][0]+"</span>"}
+else b.innerHTML="Start my 30-day plan<span>One small step a day, saved on your device</span>"}
+function icsDate(d){return ymd(d).replace(/-/g,"")+"T"+String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0")+"00"}
+function icsText(x){return String(x).replace(/\\/g,"\\\\").replace(/([,;])/g,"\\$1")}
+function makeIcs(){
+if(!dayN()){ls.set("rw_start",ymd());drawDays();drawHome()}
+var t=($("#rtime").value||"09:00").split(":"),n=dayN(),st=new Date(ls.get("rw_start")+"T00:00:00"),url=location.origin+location.pathname;
+var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Runway//30 days//EN","CALSCALE:GREGORIAN"];
+for(var k=Math.min(n,30);k<=30;k++){
+var a=new Date(st.getFullYear(),st.getMonth(),st.getDate()+k-1,+t[0],+t[1]),b=new Date(a.getTime()+15*60000);
+L.push("BEGIN:VEVENT","UID:runway-"+k+"@"+location.host,"DTSTAMP:"+icsDate(new Date()),"DTSTART:"+icsDate(a),"DTEND:"+icsDate(b),
+"SUMMARY:"+icsText("Runway day "+k+": "+DAYS[k-1][0]),"DESCRIPTION:"+icsText(DAYS[k-1][1]+" Open "+url),
+"BEGIN:VALARM","TRIGGER:PT0M","ACTION:DISPLAY","DESCRIPTION:Runway","END:VALARM","END:VEVENT")}
+L.push("END:VCALENDAR");
+var blob=new Blob([L.join("\r\n")],{type:"text/calendar"}),u=URL.createObjectURL(blob),el=document.createElement("a");
+el.href=u;el.download="runway-30-days.ics";document.body.appendChild(el);el.click();el.remove();
+setTimeout(function(){URL.revokeObjectURL(u)},4000);track("reminders_downloaded");
+$("#ics").textContent="Reminders file ready. Open it to add."}
+
+var STG=["Idea","Referral asked","Applied","Interview","Offer","Closed"];
+$("#js").innerHTML=STG.map(function(x){return "<option>"+x+"</option>"}).join("");
+function jobs(){return ls.get("rw_jobs")||[]}
+function drawJobs(){
+var J=jobs(),td=ymd(),act=0,due=0;
+J.forEach(function(j){if(j.s!=="Closed"){act++;if(j.d&&j.d<=td&&j.s!=="Offer")due++}});
+$("#jsum").innerHTML=J.length?"<b>"+act+" active "+(act===1?"lead":"leads")+"</b>"+(due?" <span class='late'>"+due+" follow-up"+(due>1?"s":"")+" due</span>":""):"<span class='hint'>No leads yet. Add your first one above.</span>";
+var ix=J.map(function(j,i){return i}).sort(function(a,b){return (J[a].d||"9999").localeCompare(J[b].d||"9999")});
+$("#jlist").innerHTML=ix.map(function(i){var j=J[i],late=j.d&&j.d<=td&&j.s!=="Closed"&&j.s!=="Offer";
+var ds=j.d?new Date(j.d+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short"}):"";
+return "<div class='job'><b>"+esc(j.c)+"</b>"+(j.r?", "+esc(j.r):"")+"<div class='row'><select data-st='"+i+"' aria-label='Stage'>"+STG.map(function(x){return "<option"+(x===j.s?" selected":"")+">"+x+"</option>"}).join("")+"</select>"+(ds?"<span class='"+(late?"late":"hint")+"'>Follow up: "+ds+"</span>":"")+"<button class='x' data-del='"+i+"'>Remove</button></div></div>"}).join("");
+$("#jlist").hidden=!J.length}
+$("#jadd").onclick=function(){var c=$("#jc").value.trim();if(!c){$("#jc").focus();return}
+var J=jobs();J.push({c:c,r:$("#jr").value.trim(),s:$("#js").value,d:$("#jd").value});ls.set("rw_jobs",J);
+$("#jc").value="";$("#jr").value="";$("#jd").value="";track("job_added");drawJobs()};
+document.addEventListener("change",function(e){var t=e.target;if(t.dataset&&t.dataset.st!==undefined){var J=jobs();J[+t.dataset.st].s=t.value;ls.set("rw_jobs",J);track("job_stage_changed");drawJobs()}});
+document.addEventListener("click",function(e){var t=e.target;
+if(t.id==="dstart"){ls.set("rw_start",ymd());track("days_started");drawDays();drawHome()}
+else if(t.id==="dtoday"){tog(Math.min(dayN(),30))}
+else if(t.dataset&&t.dataset.del!==undefined){var J=jobs();J.splice(+t.dataset.del,1);ls.set("rw_jobs",J);drawJobs()}});
+$("#ics").onclick=makeIcs;
+var SUBSCRIBE_URL="";
+if(SUBSCRIBE_URL){$("#sub").href=SUBSCRIBE_URL;$("#sub").onclick=function(){track("subscribe_clicked")}}else{$("#sub").hidden=true}
+drawDays();drawHome();drawJobs();
+
 var FEEDBACK_URL="https://docs.google.com/forms/d/e/1FAIpQLSddSt-FW1EDOystnevRJDVRReGLumiEAtaDmknVg2aAbFEMDQ/viewform?usp=header";
 (function(){var f=$("#fb");
 if(FEEDBACK_URL){f.href=FEEDBACK_URL;f.onclick=function(){track("feedback_clicked")}}else{f.hidden=true}
