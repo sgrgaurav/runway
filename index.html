@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Runway: a calm toolkit for layoffs</title>
+<meta name="description" content="Free, private tools for people facing a layoff: runway calculator, action plan, risk check and message templates.">
+<meta property="og:title" content="Runway: a calm toolkit for layoffs">
+<meta property="og:description" content="How long can you last? What to do in the first 72 hours? Free and private.">
+<meta property="og:type" content="website">
+<script defer src="https://cloud.umami.is/script.js" data-website-id="340ba7da-e45e-4b11-ab45-27757fe07aaf"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f6f6;--fg:#12292d;--mut:#5a7074;--card:#fff;--bd:#d5e0e1;--acc:#0e5c63;--acct:#fff;--good:#1b7f4b;--warn:#b86e00;--bad:#b3341f;--track:#2b3a3d;--line:#e8eeef;
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b1d;--fg:#e6f0f0;--mut:#93aaae;--card:#16282b;--bd:#27403f;--acc:#5cc5cc;--acct:#08262a;--good:#4fcf8d;--warn:#f0a73a;--bad:#ff7b66;--track:#0a1214;--line:#203638;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1b1d;--fg:#e6f0f0;--mut:#93aaae;--card:#16282b;--bd:#27403f;--acc:#5cc5cc;--acct:#08262a;--good:#4fcf8d;--warn:#f0a73a;--bad:#ff7b66;--track:#0a1214;--line:#203638;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:auto}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.55 "Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,h3{font-family:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;line-height:1.15;margin:0}
+h1{font-size:2rem;letter-spacing:-.02em}
+h2{font-size:1.35rem;margin-bottom:6px}
+h3{font-size:1.05rem}
+.sub{color:var(--mut);margin:8px 0 18px;max-width:46ch}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1px solid var(--bd);background:transparent;color:var(--fg);padding:9px 14px;border-radius:999px;font:600 .95rem "Source Sans 3",system-ui,sans-serif;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--acc);color:var(--acct);border-color:var(--acc)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--acc);outline-offset:2px}
+section[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+label.f{display:block;font-size:.9rem;color:var(--mut)}
+label.f input{display:block;width:100%;margin-top:4px;padding:10px 12px;font:600 1rem "Source Sans 3",system-ui,sans-serif;color:var(--fg);background:var(--bg);border:1px solid var(--bd);border-radius:10px}
+.hint{font-size:.82rem;color:var(--mut);margin-top:2px;display:block}
+.runway{background:var(--track);border-radius:10px;height:34px;position:relative;overflow:hidden;margin:12px 0 6px}
+.runway:before{content:"";position:absolute;left:8px;right:8px;top:50%;border-top:3px dashed rgba(255,255,255,.35)}
+.fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:10px;opacity:.92;transition:width .45s ease,background .3s}
+.ticks{display:flex;justify-content:space-between;font-size:.78rem;color:var(--mut)}
+.big{font:700 2.6rem/1 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.03em}
+.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.seg{display:flex;border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.seg button{flex:1;border:0;background:transparent;color:var(--fg);padding:11px 8px;font:600 .95rem "Source Sans 3",system-ui,sans-serif;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--acct)}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
+.chk:first-of-type{border-top:0}
+.chk input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--acc);flex:0 0 auto}
+.chk b{display:block;font-weight:600}
+.chk span{display:block;font-size:.9rem;color:var(--mut)}
+.chk input:checked+div b{text-decoration:line-through;color:var(--mut)}
+.prog{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.prog i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+.btn{border:0;background:var(--acc);color:var(--acct);padding:10px 16px;border-radius:10px;font:600 .95rem "Source Sans 3",system-ui,sans-serif;cursor:pointer;margin-top:8px}
+.btn.o{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+pre{white-space:pre-wrap;font:400 .95rem/1.5 "Source Sans 3",system-ui,sans-serif;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:12px;margin:10px 0 0}
+.note{font-size:.82rem;color:var(--mut);margin-top:24px}
+ul.tips{margin:8px 0 0;padding-left:20px}
+ul.tips li{margin:4px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Runway</h1>
+<p class="sub">Practical help for the weeks after a layoff, and for the worry before one. The numbers you enter stay on your device.</p>
+
+<div class="tabs" role="tablist" aria-label="Sections">
+<button class="tab" role="tab" data-t="run" aria-selected="true">How long can I last?</button>
+<button class="tab" role="tab" data-t="plan" aria-selected="false">Action plan</button>
+<button class="tab" role="tab" data-t="risk" aria-selected="false">Am I at risk?</button>
+<button class="tab" role="tab" data-t="msg" aria-selected="false">Messages to send</button>
+</div>
+
+<section id="p-run">
+<h2>Your runway</h2>
+<p class="sub">Enter monthly amounts in ₹. Leave blank what doesn’t apply.</p>
+<div class="card">
+<div class="grid">
+<label class="f">Savings today<input id="sav" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+<label class="f">Severance in hand<input id="sev" type="number" inputmode="numeric" min="0" placeholder="0"><span class="hint">After tax, if known</span></label>
+<label class="f">Essentials<input id="ess" type="number" inputmode="numeric" min="0" placeholder="0"><span class="hint">Rent, food, bills, school fees</span></label>
+<label class="f">EMIs and loans<input id="emi" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+<label class="f">Insurance premiums<input id="ins" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+<label class="f">SIPs and investments<input id="sip" type="number" inputmode="numeric" min="0" placeholder="0"><span class="hint">Can be paused</span></label>
+<label class="f">Everything else<input id="dis" type="number" inputmode="numeric" min="0" placeholder="0"><span class="hint">Dining, travel, shopping</span></label>
+</div>
+</div>
+<div class="card" id="out" aria-live="polite"></div>
+</section>
+
+<section id="p-plan" hidden>
+<h2>Action plan</h2>
+<p class="sub">Tick things off as you go. Your progress is saved on this device.</p>
+<div class="seg" role="group" aria-label="Your situation">
+<button data-m="lo" aria-pressed="true">I was laid off</button>
+<button data-m="ar" aria-pressed="false">I’m worried</button>
+</div>
+<div class="card">
+<h3 id="ptitle"></h3>
+<div class="prog"><i id="pbar"></i></div>
+<div id="ptxt" class="hint"></div>
+<div id="items" style="margin-top:8px"></div>
+</div>
+</section>
+
+<section id="p-risk" hidden>
+<h2>Am I at risk?</h2>
+<p class="sub">Tick what’s true right now. It’s a rough signal to help you prepare, not a prediction.</p>
+<div class="card" id="rq"></div>
+<div class="card" id="rout" aria-live="polite"></div>
+</section>
+
+<section id="p-msg" hidden>
+<h2>Messages to send</h2>
+<p class="sub">Asking for help is normal. Edit the brackets, then copy.</p>
+<div id="msgs"></div>
+</section>
+
+<p class="note">Runway counts visits and button taps anonymously, with no cookies. The amounts you type are never sent anywhere. Runway gives general information, not legal, tax, financial or insurance advice. Rules on gratuity, provident fund, insurance and severance vary by company and change over time, so confirm details with your employer, EPFO or a licensed professional.</p>
+</main>
+<script>
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+var ls={get:function(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+var seen={};
+function track(n){try{if(window.umami&&window.umami.track)window.umami.track(n)}catch(e){}}
+function once(n){if(!seen[n]){seen[n]=1;track(n)}}
+var inr=function(n){return "₹"+Math.round(n).toLocaleString("en-IN")};
+
+/* tabs */
+$$(".tab").forEach(function(b){b.onclick=function(){
+track("tab_"+b.dataset.t);$$(".tab").forEach(function(x){x.setAttribute("aria-selected",x===b)});
+["run","plan","risk","msg"].forEach(function(t){$("#p-"+t).hidden=(t!==b.dataset.t)});
+}});
+
+/* runway */
+var IDS=["sav","sev","ess","emi","ins","sip","dis"];
+var saved=ls.get("rw_in")||{};
+IDS.forEach(function(i){var e=$("#"+i);if(saved[i])e.value=saved[i];e.oninput=calc});
+function mon(n){var d=new Date(Date.now()+n*30.44*864e5);return d.toLocaleDateString("en-IN",{month:"short",year:"numeric"})}
+function calc(){
+var v={};IDS.forEach(function(i){v[i]=+$("#"+i).value||0});ls.set("rw_in",v);
+var funds=v.sav+v.sev,full=v.ess+v.emi+v.ins+v.sip+v.dis,lean=v.ess+v.emi+v.ins;
+var o=$("#out");
+if(funds&&full)once("runway_calculated");if(!funds||!full){o.innerHTML="<h3>Add your savings and monthly costs</h3><p class='hint'>Your runway will show up here.</p>";return}
+var m=funds/full,l=funds/lean;if(!isFinite(l))l=m;
+var c=l<3?"bad":l<6?"warn":"good";
+var col=c==="bad"?"var(--bad)":c==="warn"?"var(--warn)":"var(--good)";
+var msg=c==="bad"?"Short runway. Move fast on income and cut costs this week.":c==="warn"?"Workable, with limited cushion. Search actively and trim costs now.":"A healthy cushion. Stay disciplined and search without panic.";
+var save=full-lean;
+var h="<div class='big "+c+"'>"+l.toFixed(1)+" months</div>";
+h+="<p style='margin:6px 0 0'>in lean mode, covering essentials, EMIs and insurance only.</p>";
+h+="<div class='runway' role='img' aria-label='Runway length'><div class='fill' style='width:"+Math.min(l/12,1)*100+"%;background:"+col+"'></div></div>";
+h+="<div class='ticks'><span>0</span><span>3</span><span>6</span><span>9</span><span>12+ months</span></div>";
+h+="<p><b>"+msg+"</b></p>";
+h+="<ul class='tips'><li>At your current spending, funds last about "+m.toFixed(1)+" months, until around "+mon(m)+".</li>";
+h+="<li>In lean mode, until around "+mon(l)+".</li>";
+if(save>0)h+="<li>Pausing SIPs and cutting discretionary spend frees "+inr(save)+" a month.</li>";
+h+="<li>Pause first: SIPs and discretionary spending. Keep paying insurance. If an EMI is at risk, talk to your lender before you miss a payment.</li></ul>";
+o.innerHTML=h}
+calc();
+
+/* plan */
+var LISTS={
+lo:{t:"First 72 hours after a layoff",i:[
+["Take your time before signing","Ask for the exit terms in writing and read them fully. A day to review is a reasonable request."],
+["Confirm dates and pay","Last working day, notice period pay or buyout, and when the final settlement arrives."],
+["List every amount owed","Pending salary, leave encashment, variable pay or bonus, reimbursements, and gratuity if you’re eligible."],
+["Check ESOPs or RSUs","Ask what vests, what lapses, and how long you have to exercise."],
+["Sort out health and life cover","Ask when employer cover ends and whether you can continue or convert it. Line up cover before that date."],
+["Check your provident fund","Make sure your UAN is active with mobile and KYC linked. Withdraw only if you need to, since it reduces your retirement savings."],
+["Collect your documents","Relieving letter, experience letter, recent payslips and Form 16."],
+["Save your work samples","Keep only what you’re permitted to keep. Never take confidential data."],
+["Run your numbers","Use the runway tab and decide what to pause."],
+["Tell five trusted people","Ask for introductions, not pity. Most jobs come through people."],
+["Update your resume and profile","Lead with results and numbers from your last role."],
+["Look after yourself","Sleep, a daily walk, one honest conversation. This is a setback, not a verdict."]]},
+ar:{t:"Get ready, just in case",i:[
+["Know your runway","Run your numbers in the runway tab so you know your real cushion."],
+["Build an emergency fund","Work toward six months of essentials. Even a small automatic monthly transfer helps."],
+["Read your contract","Notice period, severance terms and any non-compete clause."],
+["Hold your own health cover","A personal or family policy that doesn’t depend on your employer."],
+["Keep your resume current","Update it every quarter and add results with numbers."],
+["Keep your own records","Your offer letter, appraisal letters and ratings that you’re entitled to keep."],
+["Reconnect with ten people","Former colleagues, classmates, recruiters, outside your current company."],
+["Learn one adjacent skill","Pick a role close to yours and close one gap."],
+["Hold off on big new EMIs","Delay large purchases until things feel more settled."],
+["Set your trigger","Decide now: if X happens, I start my search that week."]]}};
+var mode=ls.get("rw_mode")||"lo";
+function drawPlan(){
+var L=LISTS[mode],st=ls.get("rw_chk_"+mode)||[],done=0;
+$("#ptitle").textContent=L.t;
+$("#items").innerHTML=L.i.map(function(x,k){var on=st.indexOf(k)>-1;if(on)done++;
+return "<label class='chk'><input type='checkbox' data-k='"+k+"'"+(on?" checked":"")+"><div><b>"+x[0]+"</b><span>"+x[1]+"</span></div></label>"}).join("");
+$("#pbar").style.width=done/L.i.length*100+"%";
+$("#ptxt").textContent=done+" of "+L.i.length+" done";
+$$(".seg button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.m===mode)});
+$$("#items input").forEach(function(c){c.onchange=function(){
+var s=ls.get("rw_chk_"+mode)||[],k=+c.dataset.k,p=s.indexOf(k);
+if(c.checked){track('plan_item_ticked')}if(c.checked&&p<0)s.push(k);if(!c.checked&&p>-1)s.splice(p,1);
+ls.set("rw_chk_"+mode,s);drawPlan()}})}
+$$(".seg button").forEach(function(b){b.onclick=function(){mode=b.dataset.m;track("plan_mode_"+mode);ls.set("rw_mode",mode);drawPlan()}});
+drawPlan();
+
+/* risk */
+var RQ=["My company has announced layoffs or a hiring freeze.","My team or project was merged, paused or cut recently.","The company’s funding or revenue is under visible pressure.","My manager or skip-level changed recently.","My role overlaps with another team or could be automated.","I’ve been left out of key meetings or projects lately.","People in similar roles have been let go.","My rating dropped, or I’m on a performance plan."];
+$("#rq").innerHTML=RQ.map(function(q,k){return "<label class='chk'><input type='checkbox' data-r='"+k+"'><div><b>"+q+"</b></div></label>"}).join("");
+function risk(){
+var n=$$("#rq input:checked").length,c,t,a;
+if(n<=2){c="good";t="Lower signal";a="Keep your basics in place: runway, resume and a few active relationships."}
+else if(n<=5){c="warn";t="Moderate signal";a="Start preparing quietly this month: build your emergency fund, refresh your resume and reconnect with people outside your company."}
+else{c="bad";t="High signal";a="Prepare now. Know your runway, check your insurance, read your contract and begin quiet outreach. Preparing costs little, and surprise costs a lot."}
+$("#rout").innerHTML="<div class='big "+c+"'>"+n+" of "+RQ.length+"</div><h3 style='margin-top:8px'>"+t+"</h3><p style='margin:6px 0 0'>"+a+"</p>";}
+$$("#rq input").forEach(function(i){i.onchange=function(){once("risk_check_used");risk()}});risk();
+
+/* messages */
+var MS=[
+["To a close contact","Hi [Name], I wanted you to hear it from me: my role at [Company] was cut. I’m okay and already planning next steps. I’m looking for [role or area]. If you hear of anything, or know someone I should speak to, I’d be grateful for an introduction. Happy to share my resume."],
+["To a former manager","Hi [Name], I hope you’re well. I’m exploring new roles after [Company] restructured. You saw my work on [project], so I’d value your advice on where I could be most useful, and a reference if it comes to that. Could we talk for 15 minutes this week?"],
+["To a recruiter","Hi [Name], I’m a [role] with [X] years of experience in [domain], and I’m available from [date]. My recent work includes [one result with a number]. I’m looking for [roles, location, work mode]. Could I send you my resume?"],
+["Asking HR about exit terms","Hi [Name], thank you for the update. To plan properly, could you share in writing: my last working day, notice period terms, the full settlement breakdown (salary, leave encashment, variable pay, gratuity if applicable), ESOP treatment, and how health insurance continues after exit? I’d like a day to review before signing."]];
+$("#msgs").innerHTML=MS.map(function(m,k){return "<div class='card'><h3>"+m[0]+"</h3><pre id='m"+k+"'>"+m[1]+"</pre><button class='btn o' data-c='"+k+"'>Copy message</button></div>"}).join("");
+$$("[data-c]").forEach(function(b){b.onclick=function(){
+var t=$("#m"+b.dataset.c).textContent;track("message_copied");
+function ok(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy message"},1500)}
+function fb(){var r=document.createRange();r.selectNodeContents($("#m"+b.dataset.c));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected. Press copy."}
+try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}}});
+</script>
+</body>
+</html>
