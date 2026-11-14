@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Runway: a calm toolkit for layoffs</title>
-<meta name="description" content="Free, private tools for people facing a layoff: runway calculator, action plan, risk check and message templates.">
-<meta property="og:title" content="Runway: a calm toolkit for layoffs">
-<meta property="og:description" content="How long can you last? What to do in the first 72 hours? Free and private.">
+<title>Runway: free layoff toolkit for India</title>
+<meta name="description" content="Laid off, or worried you might be? Free tools for India: runway calculator, 72-hour plan, risk check and message templates.">
+<meta property="og:title" content="Runway: free layoff toolkit for India">
+<meta property="og:description" content="Laid off, or worried you might be? Take it one step at a time. Free and private.">
 <meta property="og:type" content="website">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="340ba7da-e45e-4b11-ab45-27757fe07aaf"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛫</text></svg>">
 <style>
 :root{--bg:#f2f6f6;--fg:#12292d;--mut:#5a7074;--card:#fff;--bd:#d5e0e1;--acc:#0e5c63;--acct:#fff;--good:#1b7f4b;--warn:#b86e00;--bad:#b3341f;--track:#2b3a3d;--line:#e8eeef;
 color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -60,21 +59,47 @@ pre{white-space:pre-wrap;font:400 .95rem/1.5 "Source Sans 3",system-ui,sans-seri
 .note{font-size:.82rem;color:var(--mut);margin-top:24px}
 ul.tips{margin:8px 0 0;padding-left:20px}
 ul.tips li{margin:4px 0}
+[hidden]{display:none!important}
+.hero{font-size:1.75rem;margin-bottom:10px}
+.cta{display:grid;gap:10px;margin:16px 0}
+.cta .btn{margin-top:0}
+.btn.big{padding:16px;text-align:left;font-size:1.05rem;width:100%}
+.btn.big span{display:block;font-weight:400;font-size:.88rem;opacity:.9;margin-top:2px}
+a.btn{display:inline-block;text-decoration:none}
 </style>
 </head>
 <body>
 <main>
 <h1>Runway</h1>
-<p class="sub">Practical help for the weeks after a layoff, and for the worry before one. The numbers you enter stay on your device.</p>
+<p class="sub">A free toolkit for layoffs in India. The numbers you enter stay on your device.</p>
 
 <div class="tabs" role="tablist" aria-label="Sections">
-<button class="tab" role="tab" data-t="run" aria-selected="true">How long can I last?</button>
+<button class="tab" role="tab" data-t="home" aria-selected="true">Start here</button>
+<button class="tab" role="tab" data-t="run" aria-selected="false">How long can I last?</button>
 <button class="tab" role="tab" data-t="plan" aria-selected="false">Action plan</button>
 <button class="tab" role="tab" data-t="risk" aria-selected="false">Am I at risk?</button>
 <button class="tab" role="tab" data-t="msg" aria-selected="false">Messages to send</button>
 </div>
 
-<section id="p-run">
+<section id="p-home">
+<h2 class="hero">Losing a job is hard. You don’t have to work out the next step alone.</h2>
+<p class="sub">Runway breaks the first weeks into small, clear steps: what to ask, what to protect, who to write to, and how long your money will last. Start where you are.</p>
+<div class="cta">
+<button class="btn big" data-go="plan:lo">I was laid off<span>Get your first 72 hours mapped out</span></button>
+<button class="btn big" data-go="risk">I’m worried it might happen<span>Check the signs and prepare early</span></button>
+<button class="btn o big" data-go="run">I just want to see my runway</button>
+</div>
+<div class="card">
+<h3>A layoff is a business decision, not a verdict on you.</h3>
+<ul class="tips">
+<li>Made for India: ₹, provident fund, gratuity, notice periods.</li>
+<li>Free, with no sign-up. The amounts you type stay on your device.</li>
+<li>Built to be used in small steps, a few minutes at a time.</li>
+</ul>
+</div>
+</section>
+
+<section id="p-run" hidden>
 <h2>Your runway</h2>
 <p class="sub">Enter monthly amounts in ₹. Leave blank what doesn’t apply.</p>
 <div class="card">
@@ -119,6 +144,13 @@ ul.tips li{margin:4px 0}
 <div id="msgs"></div>
 </section>
 
+<div class="card">
+<h3>Was this useful?</h3>
+<p class="hint">Tell me what’s missing. It shapes what I build next.</p>
+<a class="btn" id="fb" href="#" target="_blank" rel="noopener">Share feedback</a>
+<button class="btn o" id="share">Share with someone who needs it</button>
+<p class="hint" style="margin-top:12px">Built by Gaurav as a free side project.</p>
+</div>
 <p class="note">Runway counts visits and button taps anonymously, with no cookies. The amounts you type are never sent anywhere. Runway gives general information, not legal, tax, financial or insurance advice. Rules on gratuity, provident fund, insurance and severance vary by company and change over time, so confirm details with your employer, EPFO or a licensed professional.</p>
 </main>
 <script>
@@ -133,9 +165,11 @@ var inr=function(n){return "₹"+Math.round(n).toLocaleString("en-IN")};
 /* tabs */
 $$(".tab").forEach(function(b){b.onclick=function(){
 track("tab_"+b.dataset.t);$$(".tab").forEach(function(x){x.setAttribute("aria-selected",x===b)});
-["run","plan","risk","msg"].forEach(function(t){$("#p-"+t).hidden=(t!==b.dataset.t)});
+["home","run","plan","risk","msg"].forEach(function(t){$("#p-"+t).hidden=(t!==b.dataset.t)});
 }});
 
+function go(t,m){if(m){mode=m;ls.set("rw_mode",m);drawPlan()}var b=$('.tab[data-t="'+t+'"]');if(b)b.click();window.scrollTo(0,0)}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-go]");if(!b)return;var p=b.dataset.go.split(":");track("start_"+b.dataset.go.replace(":","_"));go(p[0],p[1])});
 /* runway */
 var IDS=["sav","sev","ess","emi","ins","sip","dis"];
 var saved=ls.get("rw_in")||{};
@@ -213,7 +247,7 @@ var n=$$("#rq input:checked").length,c,t,a;
 if(n<=2){c="good";t="Lower signal";a="Keep your basics in place: runway, resume and a few active relationships."}
 else if(n<=5){c="warn";t="Moderate signal";a="Start preparing quietly this month: build your emergency fund, refresh your resume and reconnect with people outside your company."}
 else{c="bad";t="High signal";a="Prepare now. Know your runway, check your insurance, read your contract and begin quiet outreach. Preparing costs little, and surprise costs a lot."}
-$("#rout").innerHTML="<div class='big "+c+"'>"+n+" of "+RQ.length+"</div><h3 style='margin-top:8px'>"+t+"</h3><p style='margin:6px 0 0'>"+a+"</p>";}
+$("#rout").innerHTML="<div class='big "+c+"'>"+n+" of "+RQ.length+"</div><h3 style='margin-top:8px'>"+t+"</h3><p style='margin:6px 0 0'>"+a+"</p><button class='btn' data-go='plan:ar'>See my preparation plan</button> <button class='btn o' data-go='run'>Check my runway</button>";}
 $$("#rq input").forEach(function(i){i.onchange=function(){once("risk_check_used");risk()}});risk();
 
 /* messages */
@@ -228,6 +262,13 @@ var t=$("#m"+b.dataset.c).textContent;track("message_copied");
 function ok(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy message"},1500)}
 function fb(){var r=document.createRange();r.selectNodeContents($("#m"+b.dataset.c));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected. Press copy."}
 try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}}});
+var FEEDBACK_URL="https://docs.google.com/forms/d/e/1FAIpQLSddSt-FW1EDOystnevRJDVRReGLumiEAtaDmknVg2aAbFEMDQ/viewform?usp=header";
+(function(){var f=$("#fb");
+if(FEEDBACK_URL){f.href=FEEDBACK_URL;f.onclick=function(){track("feedback_clicked")}}else{f.hidden=true}
+$("#share").onclick=function(){track("share_clicked");var b=this,u=location.origin+location.pathname+"?utm_source=share",x="Free tools if you’ve been laid off, or fear you might be: runway calculator, 72-hour plan, message templates. ";
+function ok(){b.textContent="Link copied"}
+if(navigator.share){navigator.share({title:"Runway",text:x,url:u}).catch(function(){})}
+else{try{navigator.clipboard.writeText(x+u).then(ok,function(){prompt("Copy this link",u)})}catch(e){prompt("Copy this link",u)}}}})();
 </script>
 </body>
 </html>
